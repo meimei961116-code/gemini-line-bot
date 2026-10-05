@@ -1,0 +1,44 @@
+# 機密金鑰設定檔（切勿上傳！）
+.env
+.env.local
+*.env
+
+# Python 快取與虛擬環境
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Log 記錄檔
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 編輯器與系統暫存
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
