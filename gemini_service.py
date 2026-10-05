@@ -73,8 +73,19 @@ class GeminiService:
                     history = history[-self.max_history_turns * 2:]
                     self.chat_history[user_id] = history
 
-                # 優先使用官方最新 flash 模型
-                model_candidates = ["gemini-flash-latest", "gemini-3.5-flash", "gemini-3.8-flash", "gemini-flash-lite-latest"]
+                import datetime
+                weekday_map = {1: "一", 2: "二", 3: "三", 4: "四", 5: "五", 6: "六", 7: "日"}
+                dt_now = datetime.datetime.now()
+                now_str = f"{dt_now.year} 年 {dt_now.month} 月 {dt_now.day} 日 (星期{weekday_map.get(dt_now.isoweekday(), '')})"
+                
+                effective_system_instruction = (
+                    f"{self.system_prompt}\n\n"
+                    f"【系統即時時空資訊】現在真實世界的時間是：{now_str}。\n"
+                    f"請務必依據現在真實的年份（{dt_now.year} 年）與時間進行回應，切勿回答目前還在 2024 年或 2025 年。"
+                )
+
+                # 優先使用反應快速且配額充足的模型
+                model_candidates = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-flash-latest", "gemini-3.8-flash"]
                 response = None
                 for candidate in model_candidates:
                     try:
@@ -82,7 +93,7 @@ class GeminiService:
                             model=candidate,
                             contents=history,
                             config=types.GenerateContentConfig(
-                                system_instruction=self.system_prompt,
+                                system_instruction=effective_system_instruction,
                                 temperature=0.7,
                             )
                         )
@@ -90,6 +101,7 @@ class GeminiService:
                     except Exception as me:
                         logger.warning(f"嘗試模型 {candidate} 失敗: {me}，嘗試下一個備援模型")
                         continue
+
 
                 if response is None:
                     raise RuntimeError("所有可用 Gemini 模型皆未能回應")
