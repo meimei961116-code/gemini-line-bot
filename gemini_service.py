@@ -12,7 +12,7 @@ class GeminiService:
             "你是一位親切、聰明且熱心助人的繁體中文 AI 助理。請用生動、有條理且自然的繁體中文回答使用者的問題。"
         )
         self.chat_history = defaultdict(list)
-        self.max_history_turns = 6
+        self.max_history_turns = 10
         self.client = None
         self._init_client()
 
@@ -84,8 +84,8 @@ class GeminiService:
                     f"請務必依據現在真實的年份（{dt_now.year} 年）與時間進行回應，切勿回答目前還在 2024 年或 2025 年。"
                 )
 
-                # 優先使用反應快速且配額充足的模型
-                model_candidates = ["gemini-3.5-flash-lite", "gemini-3.5-flash", "gemini-flash-latest", "gemini-3.8-flash"]
+                # 優先使用具備強大深度推理能力的 gemini-3.5-flash 旗艦模型
+                model_candidates = ["gemini-3.5-flash", "gemini-flash-latest", "gemini-3.5-flash-lite"]
                 response = None
                 for candidate in model_candidates:
                     try:
@@ -94,7 +94,7 @@ class GeminiService:
                             contents=history,
                             config=types.GenerateContentConfig(
                                 system_instruction=effective_system_instruction,
-                                temperature=0.7,
+                                temperature=0.4,
                             )
                         )
                         break
